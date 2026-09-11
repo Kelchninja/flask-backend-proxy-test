@@ -1,0 +1,19 @@
+# Example reverse proxy configuration for this backend (Caddy 2).
+# Caddy sets X-Forwarded-For/Proto/Host automatically and does not buffer
+# responses, so streaming works out of the box.
+
+proxy.example.com {
+    request_body {
+        max_size 16MB
+    }
+
+    reverse_proxy 127.0.0.1:8000 {
+        header_up X-Request-ID {http.request.uuid}
+
+        transport http {
+            dial_timeout 5s
+            read_timeout 300s
+            keepalive 30s
+        }
+    }
+}
